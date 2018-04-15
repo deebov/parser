@@ -1,13 +1,10 @@
-const request = require('request');
-const iconv = require('iconv-lite');
+const needle = require('needle');
+const tress = require('tress');
 
-const URL = 'http://topmusic.uz';
-const requestOptions = {
-  url: 'http://megasoft.uz',
-  encoding: null
-}
-request(requestOptions, (err, res, body) => {
+const URL = 'http://megasoft.uz';
+
+needle.get(URL, (err, res) => {
   if (err) throw err;
   console.log(res.statusCode);
-  console.log(iconv.decode(body, 'win1251'));
+  console.log(res.body);
 })
