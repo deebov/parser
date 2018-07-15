@@ -11,33 +11,47 @@ const result = [];
 
 const q = tress((url, callback) => {
   needle.get(url, (err, res) => {
+    
     if (err) throw err;
-
+    // Page content
     const $ = cheerio.load(res.body);
     // Apps link block
     const appList = $('td[style="padding-left:20px;padding-top:16px;"]').children();
-
-    if(url === 'http://megasoft.uz'){
+    
+    if(url === URL){
       appList.each((idx, el) => {
         // List item element
         const li = el;
         // List item children elements
         const liChild = li.children;
-        liChild.map((idx, el) => {
+        liChild.map((el, idx) => {
           // Adding links to the queue
-          q.push(`http://megasoft.uz${idx.attribs.href}`);
+          q.push(`http://megasoft.uz${el.attribs.href}`);
         })
       })
     } else {
       // App title
       const title = $('.title').html();
+      
       // Adding app title to the result array
       result.push({
-        name: title
+        title
       });
     }
     callback();
-  })
+  });
+  
 }, 10);
 
 q.push(URL);
+
+// Do after finish
+q.drain = function() {
+  // Result file
+  const file = 'result.json';
+  // Create a resukt file
+  fs.writeFile(file, JSON.stringify(result), {encoding: 'utf8'}, (err) => {
+    if(err) throw err;
+    console.log(`The result was succesfully saved in ${file}`);
+  });
+}
